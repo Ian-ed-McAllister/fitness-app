@@ -129,4 +129,11 @@ export async function runMigrations(): Promise<void> {
       is_seeded INTEGER NOT NULL DEFAULT 0
     );
   `);
+
+  // Additive migrations — safe to re-run (errors mean column already exists)
+  try {
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN custom_meal_slots TEXT NOT NULL DEFAULT '[]'`
+    );
+  } catch {}
 }

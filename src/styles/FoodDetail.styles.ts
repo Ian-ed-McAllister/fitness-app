@@ -1,0 +1,141 @@
+import { StyleSheet } from 'react-native';
+import { Colors } from '../constants/colors';
+
+export const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: Colors.background },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  headerText: { flex: 1 },
+  title: { fontSize: 17, fontWeight: '700', color: Colors.text },
+  brand: { fontSize: 13, color: Colors.textMuted },
+  scroll: { flex: 1 },
+  scrollContent: { padding: 16, gap: 16 },
+  calCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 16,
+    alignItems: 'center',
+    paddingVertical: 24,
+    gap: 4,
+  },
+  calNum: { fontSize: 48, fontWeight: '800', color: Colors.text, letterSpacing: -2 },
+  calUnit: { fontSize: 16, color: Colors.textMuted },
+  calSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
+  macroGrid: { flexDirection: 'row', gap: 10 },
+  section: { gap: 10 },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  modeToggle: {
+    flexDirection: 'row',
+    backgroundColor: Colors.surface,
+    borderRadius: 10,
+    padding: 3,
+    gap: 3,
+  },
+  modeBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  modeBtnActive: {
+    backgroundColor: Colors.surface2,
+  },
+  modeBtnText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: Colors.textMuted,
+  },
+  modeBtnTextActive: {
+    color: Colors.text,
+    fontWeight: '600',
+  },
+  servingBase: { fontSize: 13, color: Colors.textSecondary },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  stepBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: Colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  amountInput: {
+    width: 80,
+    height: 40,
+    backgroundColor: Colors.surface,
+    borderRadius: 10,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.text,
+  },
+  inputUnit: { fontSize: 14, color: Colors.textMuted },
+  slotGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  slotBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  slotBtnActive: {
+    backgroundColor: Colors.primaryMuted,
+    borderColor: Colors.primary,
+  },
+  slotText: { fontSize: 14, color: Colors.textSecondary, fontWeight: '500' },
+  slotTextActive: { color: Colors.primary },
+  extraGrid: { gap: 0 },
+  footer: {
+    padding: 16,
+    paddingBottom: 24,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  saveBtn: {
+    backgroundColor: Colors.primary,
+    borderRadius: 14,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveBtnDisabled: { opacity: 0.6 },
+  saveBtnText: { color: Colors.textInverse, fontSize: 16, fontWeight: '700' },
+});
+
+export const cellStyles = StyleSheet.create({
+  cell: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: Colors.surface2,
+    borderRadius: 10,
+    paddingVertical: 12,
+    gap: 2,
+  },
+  val: { fontSize: 18, fontWeight: '700' },
+  label: { fontSize: 11, color: Colors.textMuted },
+});
+
+export const extraStyles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  label: { fontSize: 14, color: Colors.textSecondary },
+  val: { fontSize: 14, fontWeight: '500', color: Colors.text },
+});

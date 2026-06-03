@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -27,66 +26,41 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: Colors.background },
-          animation: 'slide_from_right',
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="nutrition/add-food"
-          options={{ presentation: 'modal', headerShown: false }}
-        />
-        <Stack.Screen
-          name="nutrition/barcode-scan"
-          options={{ presentation: 'fullScreenModal', headerShown: false }}
-        />
-        <Stack.Screen
-          name="nutrition/food-search"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="nutrition/food-detail"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="nutrition/manual-entry"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="nutrition/saved-meals"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="nutrition/create-meal"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="workouts/create-template"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="workouts/template-detail"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="workouts/exercise-search"
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="workouts/active-session"
-          options={{ presentation: 'fullScreenModal', headerShown: false }}
-        />
-        <Stack.Screen
-          name="workouts/session-history"
-          options={{ headerShown: false }}
-        />
-      </Stack>
-    </SafeAreaProvider>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
+      <SafeAreaProvider style={{ flex: 1, backgroundColor: Colors.background }}>
+        <StatusBar style="light" backgroundColor={Colors.background} />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: Colors.background },
+            animation: 'default',
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="nutrition/add-food"
+            options={{ presentation: 'modal', headerShown: false }}
+          />
+          <Stack.Screen
+            name="nutrition/barcode-scan"
+            options={{ presentation: 'fullScreenModal', headerShown: false }}
+          />
+          <Stack.Screen name="nutrition/food-search" options={{ headerShown: false }} />
+          <Stack.Screen name="nutrition/food-detail" options={{ headerShown: false }} />
+          <Stack.Screen name="nutrition/manual-entry" options={{ headerShown: false }} />
+          <Stack.Screen name="nutrition/saved-meals" options={{ headerShown: false }} />
+          <Stack.Screen name="nutrition/create-meal" options={{ headerShown: false }} />
+          <Stack.Screen name="workouts/create-template" options={{ headerShown: false }} />
+          <Stack.Screen name="workouts/template-detail" options={{ headerShown: false }} />
+          <Stack.Screen name="workouts/exercise-search" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="workouts/active-session"
+            options={{ presentation: 'fullScreenModal', headerShown: false }}
+          />
+          <Stack.Screen name="workouts/session-history" options={{ headerShown: false }} />
+        </Stack>
+      </SafeAreaProvider>
+    </View>
   );
 }
 

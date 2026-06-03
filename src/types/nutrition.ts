@@ -1,6 +1,15 @@
 export type FoodSource = 'default' | 'custom' | 'openfoodfacts';
 
-export type MealSlot = 'breakfast' | 'lunch' | 'dinner' | 'snacks';
+export type MealSlot = string;
+
+export const DEFAULT_MEAL_SLOTS = ['breakfast', 'lunch', 'dinner', 'snacks'] as const;
+
+export const DEFAULT_SLOT_LABELS: Record<string, string> = {
+  breakfast: 'Breakfast',
+  lunch: 'Lunch',
+  dinner: 'Dinner',
+  snacks: 'Snacks',
+};
 
 export interface FoodItem {
   id: string;

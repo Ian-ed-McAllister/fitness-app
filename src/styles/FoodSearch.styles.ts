@@ -1,0 +1,60 @@
+import { StyleSheet } from 'react-native';
+import { Colors } from '../constants/colors';
+
+export const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: Colors.background },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 12,
+  },
+  searchBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  input: {
+    flex: 1,
+    fontSize: 15,
+    color: Colors.text,
+    padding: 0,
+  },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 60, gap: 16 },
+  emptyText: { fontSize: 15, color: Colors.textMuted },
+  createBtn: {
+    backgroundColor: Colors.primaryMuted,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  createBtnText: { color: Colors.primary, fontWeight: '600', fontSize: 14 },
+  sectionLabel: {
+    fontSize: 12,
+    color: Colors.textMuted,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  sep: { height: 1, backgroundColor: Colors.border, marginHorizontal: 16 },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  rowLeft: { flex: 1, gap: 2 },
+  rowName: { fontSize: 15, fontWeight: '500', color: Colors.text },
+  rowBrand: { fontSize: 12, color: Colors.textSecondary },
+  rowServing: { fontSize: 12, color: Colors.textMuted },
+  rowRight: { alignItems: 'flex-end' },
+  rowCal: { fontSize: 16, fontWeight: '600', color: Colors.text },
+  rowCalUnit: { fontSize: 10, color: Colors.textMuted },
+});
