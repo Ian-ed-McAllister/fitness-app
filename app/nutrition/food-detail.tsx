@@ -5,14 +5,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { styles, cellStyles, extraStyles } from '../../src/styles/FoodDetail.styles';
 import { getFoodById, addFoodLog, updateFoodLog } from '../../src/db/food';
+import { DEFAULT_SLOT_LABELS } from '../../src/types/nutrition';
 import type { FoodItem, MealSlot } from '../../src/types/nutrition';
-
-const MEAL_LABELS: Record<string, string> = {
-  breakfast: 'Breakfast',
-  lunch: 'Lunch',
-  dinner: 'Dinner',
-  snacks: 'Snacks',
-};
 
 type InputMode = 'servings' | 'weight';
 
@@ -20,7 +14,6 @@ export default function FoodDetailScreen() {
   const { foodId, mealSlot, date, logId, currentServings } = useLocalSearchParams<{
     foodId: string; mealSlot: string; date: string; logId?: string; currentServings?: string;
   }>();
-
   const [food, setFood] = useState<FoodItem | null>(null);
   const [servings, setServings] = useState(currentServings ? parseFloat(currentServings) : 1);
   const [servingText, setServingText] = useState(currentServings ?? '1');
@@ -107,8 +100,7 @@ export default function FoodDetailScreen() {
   const m = (val: number) => Math.round(val * servings * 10) / 10;
   const totalCal = Math.round(food.calories * servings);
   const totalGrams = Math.round(servings * food.servingSize);
-  const slotLabel = MEAL_LABELS[selectedSlot] ?? selectedSlot;
-  const allSlots = Object.keys(MEAL_LABELS) as MealSlot[];
+  const slotLabel = DEFAULT_SLOT_LABELS[selectedSlot] ?? selectedSlot;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -172,24 +164,6 @@ export default function FoodDetailScreen() {
           )}
         </View>
 
-        {!logId && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Add to Meal</Text>
-            <View style={styles.slotGrid}>
-              {allSlots.map((slot) => (
-                <TouchableOpacity
-                  key={slot}
-                  style={[styles.slotBtn, selectedSlot === slot && styles.slotBtnActive]}
-                  onPress={() => setSelectedSlot(slot)}
-                >
-                  <Text style={[styles.slotText, selectedSlot === slot && styles.slotTextActive]}>
-                    {MEAL_LABELS[slot]}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
 
         {(food.sugar != null || food.sodium != null || food.saturatedFat != null) && (
           <View style={styles.section}>

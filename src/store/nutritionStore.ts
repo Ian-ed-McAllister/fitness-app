@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { format } from 'date-fns';
-import { getDailyLog, deleteFoodLog } from '../db/food';
+import { getDailyLog, deleteFoodLog, deleteFoodLogBySlot } from '../db/food';
 import { getDatabase } from '../db/client';
 import type { FoodItem, FoodLogEntry, MacroTotals, DailyGoals, MealSlot } from '../types/nutrition';
 import { DEFAULT_MEAL_SLOTS } from '../types/nutrition';
@@ -99,7 +99,10 @@ export const useNutritionStore = create<NutritionState>()((set, get) => ({
       `UPDATE user_settings SET custom_meal_slots = ? WHERE id = 1`,
       [JSON.stringify(updated)]
     );
-    set({ customMealSlots: updated });
+    await deleteFoodLogBySlot(name);
+    const { selectedDate } = get();
+    const dailyLog = await getDailyLog(selectedDate);
+    set({ customMealSlots: updated, dailyLog });
   },
 
   removeLogEntry: async (id) => {

@@ -1,0 +1,50 @@
+import { StyleSheet } from 'react-native';
+import { Colors } from '../constants/colors';
+
+export const sheetStyles = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: Colors.overlay, justifyContent: 'flex-end' },
+  sheet: {
+    backgroundColor: Colors.surface,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 32,
+    gap: 4,
+  },
+  handle: {
+    width: 36,
+    height: 4,
+    backgroundColor: Colors.border,
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  title: { fontSize: 18, fontWeight: '700', color: Colors.text, marginBottom: 4 },
+  subtitle: { fontSize: 14, color: Colors.textMuted, lineHeight: 20, marginBottom: 8 },
+  action: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, gap: 14 },
+  actionIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: Colors.surface2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionIconDanger: { backgroundColor: Colors.dangerMuted },
+  actionText: { flex: 1, fontSize: 16, fontWeight: '500', color: Colors.text },
+  actionTextDanger: { color: Colors.danger },
+  divider: { height: 1, backgroundColor: Colors.border, marginVertical: 2 },
+  cancel: { alignItems: 'center', paddingVertical: 14, marginTop: 4 },
+  cancelText: { fontSize: 15, color: Colors.textMuted, fontWeight: '500' },
+  dangerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: Colors.danger,
+    borderRadius: 14,
+    height: 52,
+    marginTop: 8,
+  },
+  dangerBtnText: { fontSize: 16, fontWeight: '700', color: Colors.textInverse },
+});

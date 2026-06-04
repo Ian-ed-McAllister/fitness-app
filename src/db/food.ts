@@ -166,6 +166,11 @@ export async function deleteFoodLog(id: string): Promise<void> {
   await db.runAsync(`DELETE FROM food_log WHERE id = ?`, [id]);
 }
 
+export async function deleteFoodLogBySlot(slot: string): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync(`DELETE FROM food_log WHERE meal_slot = ?`, [slot]);
+}
+
 export async function updateFoodLog(id: string, servings: number): Promise<void> {
   const db = await getDatabase();
   await db.runAsync(`UPDATE food_log SET servings = ? WHERE id = ?`, [servings, id]);

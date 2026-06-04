@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   Modal,
   TextInput,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
@@ -17,8 +16,9 @@ import { Colors } from '../../src/constants/colors';
 import { MacroRing, MealSection } from '../../src/components/nutrition';
 import { ProgressBar } from '../../src/components/ui';
 import { useNutritionStore, computeTotals } from '../../src/store/nutritionStore';
-import { DEFAULT_MEAL_SLOTS } from '../../src/types/nutrition';
+import { DEFAULT_MEAL_SLOTS, DEFAULT_SLOT_LABELS } from '../../src/types/nutrition';
 import { styles, macroBarStyles } from '../../src/styles/NutritionTab.styles';
+import { sheetStyles } from '../../src/styles/Sheet.styles';
 import type { FoodLogEntry, MealSlot } from '../../src/types/nutrition';
 
 export default function NutritionTab() {
@@ -39,6 +39,8 @@ export default function NutritionTab() {
 
   const [addMealVisible, setAddMealVisible] = useState(false);
   const [newMealName, setNewMealName] = useState('');
+  const [deleteMealSlot, setDeleteMealSlot] = useState<string | null>(null);
+  const [slotPickerVisible, setSlotPickerVisible] = useState(false);
 
   useEffect(() => {
     loadGoals();
@@ -91,10 +93,7 @@ export default function NutritionTab() {
   }
 
   function handleDeleteMeal(slot: string) {
-    Alert.alert('Remove Meal', `Remove "${slot}" from today's view?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Remove', style: 'destructive', onPress: () => removeCustomMealSlot(slot) },
-    ]);
+    setDeleteMealSlot(slot);
   }
 
   return (
@@ -161,7 +160,7 @@ export default function NutritionTab() {
         </ScrollView>
       )}
 
-      <TouchableOpacity style={styles.fab} onPress={() => openAddFood('snacks')} activeOpacity={0.85}>
+      <TouchableOpacity style={styles.fab} onPress={() => setSlotPickerVisible(true)} activeOpacity={0.85}>
         <Ionicons name="add" size={28} color={Colors.textInverse} />
       </TouchableOpacity>
 
@@ -190,6 +189,57 @@ export default function NutritionTab() {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
+
+      {/* Slot picker sheet (FAB) */}
+      <Modal visible={slotPickerVisible} transparent animationType="slide" onRequestClose={() => setSlotPickerVisible(false)}>
+        <TouchableOpacity style={sheetStyles.overlay} activeOpacity={1} onPress={() => setSlotPickerVisible(false)}>
+          <TouchableOpacity style={sheetStyles.sheet} activeOpacity={1}>
+            <View style={sheetStyles.handle} />
+            <Text style={sheetStyles.title}>Add Food To…</Text>
+            {[...DEFAULT_MEAL_SLOTS, ...customMealSlots].map((slot, index, arr) => (
+              <React.Fragment key={slot}>
+                <TouchableOpacity
+                  style={sheetStyles.action}
+                  onPress={() => {
+                    setSlotPickerVisible(false);
+                    openAddFood(slot);
+                  }}
+                >
+                  <View style={sheetStyles.actionIcon}>
+                    <Ionicons name={slotIcon(slot)} size={20} color={Colors.primary} />
+                  </View>
+                  <Text style={sheetStyles.actionText}>
+                    {DEFAULT_SLOT_LABELS[slot] ?? slot}
+                  </Text>
+                  <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+                </TouchableOpacity>
+                {index < arr.length - 1 && <View style={sheetStyles.divider} />}
+              </React.Fragment>
+            ))}
+            <TouchableOpacity style={sheetStyles.cancel} onPress={() => setSlotPickerVisible(false)}>
+              <Text style={sheetStyles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
+      {/* Remove custom meal slot sheet */}
+      <Modal visible={!!deleteMealSlot} transparent animationType="slide" onRequestClose={() => setDeleteMealSlot(null)}>
+        <TouchableOpacity style={sheetStyles.overlay} activeOpacity={1} onPress={() => setDeleteMealSlot(null)}>
+          <TouchableOpacity style={sheetStyles.sheet} activeOpacity={1}>
+            <View style={sheetStyles.handle} />
+            <Text style={sheetStyles.title}>Remove Meal?</Text>
+            <Text style={sheetStyles.subtitle}>"{deleteMealSlot}" and all food entries logged in it will be permanently deleted.</Text>
+            <TouchableOpacity style={sheetStyles.dangerBtn} onPress={() => { if (deleteMealSlot) { removeCustomMealSlot(deleteMealSlot); setDeleteMealSlot(null); } }}>
+              <Ionicons name="remove-circle-outline" size={18} color={Colors.textInverse} />
+              <Text style={sheetStyles.dangerBtnText}>Remove Meal Slot</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={sheetStyles.cancel} onPress={() => setDeleteMealSlot(null)}>
+              <Text style={sheetStyles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -207,4 +257,14 @@ function MacroBar({ label, current, goal, color }: { label: string; current: num
       <ProgressBar current={current} goal={goal} color={color} height={5} />
     </View>
   );
+}
+
+function slotIcon(slot: string): React.ComponentProps<typeof Ionicons>['name'] {
+  switch (slot) {
+    case 'breakfast': return 'sunny-outline';
+    case 'lunch':     return 'partly-sunny-outline';
+    case 'dinner':    return 'moon-outline';
+    case 'snacks':    return 'cafe-outline';
+    default:          return 'restaurant-outline';
+  }
 }

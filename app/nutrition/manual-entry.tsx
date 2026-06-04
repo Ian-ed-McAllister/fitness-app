@@ -12,7 +12,7 @@ export default function ManualEntryScreen() {
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
   const [servingSize, setServingSize] = useState('100');
-  const [servingUnit, setServingUnit] = useState('g');
+  const [servingUnit, setServingUnit] = useState<'g' | 'ml'>('g');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
@@ -70,7 +70,20 @@ export default function ManualEntryScreen() {
           <Field label="Brand" value={brand} onChange={setBrand} placeholder="Optional" />
           <View style={styles.row2}>
             <View style={{ flex: 2 }}><Field label="Serving Size *" value={servingSize} onChange={setServingSize} keyboardType="decimal-pad" /></View>
-            <View style={{ flex: 1 }}><Field label="Unit" value={servingUnit} onChange={setServingUnit} placeholder="g" /></View>
+            <View style={{ flex: 1 }}>
+              <Text style={fieldStyles.label}>Unit</Text>
+              <View style={styles.unitToggle}>
+                {(['g', 'ml'] as const).map((u) => (
+                  <TouchableOpacity
+                    key={u}
+                    style={[styles.unitBtn, servingUnit === u && styles.unitBtnActive]}
+                    onPress={() => setServingUnit(u)}
+                  >
+                    <Text style={[styles.unitBtnText, servingUnit === u && styles.unitBtnTextActive]}>{u}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
           </View>
           <View style={styles.divider} />
           <Text style={styles.sectionLabel}>Nutrition per serving</Text>

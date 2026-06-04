@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, Alert, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../../src/constants/colors';
 import { styles } from '../../src/styles/SavedMeals.styles';
+import { sheetStyles } from '../../src/styles/Sheet.styles';
 import { getSavedMeals, deleteSavedMeal } from '../../src/db/meals';
 import { addFoodLog } from '../../src/db/food';
 import type { SavedMeal, MealSlot } from '../../src/types/nutrition';
@@ -13,6 +15,7 @@ export default function SavedMealsScreen() {
   const [meals, setMeals] = useState<SavedMeal[]>([]);
   const [loading, setLoading] = useState(true);
   const [logging, setLogging] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SavedMeal | null>(null);
 
   useFocusEffect(useCallback(() => { load(); }, []));
 
@@ -36,14 +39,11 @@ export default function SavedMealsScreen() {
     }
   }
 
-  function confirmDelete(meal: SavedMeal) {
-    Alert.alert('Delete Meal', `Delete "${meal.name}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: async () => {
-        await deleteSavedMeal(meal.id);
-        setMeals((prev) => prev.filter((m) => m.id !== meal.id));
-      }},
-    ]);
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    await deleteSavedMeal(deleteTarget.id);
+    setMeals((prev) => prev.filter((m) => m.id !== deleteTarget.id));
+    setDeleteTarget(null);
   }
 
   function getMealTotals(meal: SavedMeal) {
@@ -110,7 +110,7 @@ export default function SavedMealsScreen() {
                 ))}
                 {item.items.length > 3 && <Text style={styles.moreItems}>+{item.items.length - 3} more</Text>}
                 <View style={styles.cardActions}>
-                  <TouchableOpacity style={styles.deleteAction} onPress={() => confirmDelete(item)}>
+                  <TouchableOpacity style={styles.deleteAction} onPress={() => setDeleteTarget(item)}>
                     <Ionicons name="trash-outline" size={18} color="#FF453A" />
                   </TouchableOpacity>
                   <TouchableOpacity style={[styles.logBtn, isLogging && styles.logBtnDisabled]} onPress={() => logMeal(item)} disabled={isLogging}>
@@ -122,6 +122,23 @@ export default function SavedMealsScreen() {
           }}
         />
       )}
+
+      <Modal visible={!!deleteTarget} transparent animationType="slide" onRequestClose={() => setDeleteTarget(null)}>
+        <TouchableOpacity style={sheetStyles.overlay} activeOpacity={1} onPress={() => setDeleteTarget(null)}>
+          <TouchableOpacity style={sheetStyles.sheet} activeOpacity={1}>
+            <View style={sheetStyles.handle} />
+            <Text style={sheetStyles.title}>Delete Meal?</Text>
+            <Text style={sheetStyles.subtitle}>"{deleteTarget?.name}" will be permanently deleted.</Text>
+            <TouchableOpacity style={sheetStyles.dangerBtn} onPress={confirmDelete}>
+              <Ionicons name="trash-outline" size={18} color={Colors.textInverse} />
+              <Text style={sheetStyles.dangerBtnText}>Delete Meal</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={sheetStyles.cancel} onPress={() => setDeleteTarget(null)}>
+              <Text style={sheetStyles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }

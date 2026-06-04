@@ -28,6 +28,7 @@ export interface WorkoutTemplate {
   exercises: TemplateExercise[];
   createdAt: number;
   updatedAt: number;
+  lastPerformedAt?: number;
 }
 
 export interface WorkoutSession {
@@ -71,4 +72,9 @@ export interface ActiveSet {
 export interface PreviousSetData {
   reps?: number;
   weight?: number;
+}
+
+export interface DraftTemplateExercise {
+  exercise: Exercise;
+  sets: number;
 }

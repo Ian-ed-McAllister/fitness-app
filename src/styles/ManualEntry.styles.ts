@@ -40,6 +40,23 @@ export const styles = StyleSheet.create({
   },
   saveBtnDisabled: { opacity: 0.6 },
   saveBtnText: { color: Colors.textInverse, fontSize: 16, fontWeight: '700' },
+
+  unitToggle: {
+    flexDirection: 'row',
+    backgroundColor: Colors.surface,
+    borderRadius: 10,
+    padding: 3,
+    gap: 3,
+  },
+  unitBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  unitBtnActive: { backgroundColor: Colors.primary },
+  unitBtnText: { fontSize: 14, fontWeight: '600', color: Colors.textMuted },
+  unitBtnTextActive: { color: Colors.textInverse },
 });
 
 export const fieldStyles = StyleSheet.create({

@@ -7,7 +7,6 @@ import {
   TextInput,
   Modal,
   ActivityIndicator,
-  Alert,
   useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
@@ -20,6 +19,7 @@ import { Colors } from '../../src/constants/colors';
 import { WeightChart } from '../../src/components/charts/WeightChart';
 import { useWeightStore } from '../../src/store/weightStore';
 import { styles } from '../../src/styles/WeightTab.styles';
+import { sheetStyles } from '../../src/styles/Sheet.styles';
 
 type Range = 30 | 60 | 90;
 
@@ -32,6 +32,8 @@ export default function WeightTab() {
   const [weightInput, setWeightInput] = useState('');
   const [notesInput, setNotesInput] = useState('');
   const [saving, setSaving] = useState(false);
+  const [weightError, setWeightError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; date: string } | null>(null);
 
   const { width } = useWindowDimensions();
   const chartWidth = width - 32; // 16px margin each side
@@ -49,15 +51,17 @@ export default function WeightTab() {
   function openModal() {
     setWeightInput('');
     setNotesInput('');
+    setWeightError('');
     setModalVisible(true);
   }
 
   async function handleSave() {
     const val = parseFloat(weightInput);
     if (isNaN(val) || val <= 0) {
-      Alert.alert('Invalid', 'Please enter a valid weight.');
+      setWeightError('Please enter a valid weight');
       return;
     }
+    setWeightError('');
     setSaving(true);
     try {
       await logWeight(val, format(new Date(), 'yyyy-MM-dd'), notesInput.trim() || undefined);
@@ -68,10 +72,7 @@ export default function WeightTab() {
   }
 
   function confirmDelete(id: string, date: string) {
-    Alert.alert('Delete Entry', `Delete entry for ${format(parseISO(date), 'MMM d, yyyy')}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => removeEntry(id) },
-    ]);
+    setDeleteTarget({ id, date });
   }
 
   // Stats
@@ -200,6 +201,7 @@ export default function WeightTab() {
                   autoFocus
                   selectTextOnFocus
                 />
+                {weightError ? <Text style={{ color: '#FF453A', fontSize: 12, position: 'absolute', bottom: -18, left: 0 }}>{weightError}</Text> : null}
                 <View style={styles.unitToggle}>
                   {(['kg', 'lb'] as const).map((u) => (
                     <TouchableOpacity
@@ -242,6 +244,26 @@ export default function WeightTab() {
             </TouchableOpacity>
           </TouchableOpacity>
         </KeyboardAvoidingView>
+      </Modal>
+
+      {/* Delete entry sheet */}
+      <Modal visible={!!deleteTarget} transparent animationType="slide" onRequestClose={() => setDeleteTarget(null)}>
+        <TouchableOpacity style={sheetStyles.overlay} activeOpacity={1} onPress={() => setDeleteTarget(null)}>
+          <TouchableOpacity style={sheetStyles.sheet} activeOpacity={1}>
+            <View style={sheetStyles.handle} />
+            <Text style={sheetStyles.title}>Delete Entry?</Text>
+            <Text style={sheetStyles.subtitle}>
+              {deleteTarget ? `Entry for ${format(parseISO(deleteTarget.date), 'MMM d, yyyy')} will be permanently deleted.` : ''}
+            </Text>
+            <TouchableOpacity style={sheetStyles.dangerBtn} onPress={() => { if (deleteTarget) { removeEntry(deleteTarget.id); setDeleteTarget(null); } }}>
+              <Ionicons name="trash-outline" size={18} color="#000" />
+              <Text style={sheetStyles.dangerBtnText}>Delete Entry</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={sheetStyles.cancel} onPress={() => setDeleteTarget(null)}>
+              <Text style={sheetStyles.cancelText}>Cancel</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     </SafeAreaView>
   );

@@ -58,6 +58,7 @@ export default function RootLayout() {
             options={{ presentation: 'fullScreenModal', headerShown: false }}
           />
           <Stack.Screen name="workouts/session-history" options={{ headerShown: false }} />
+          <Stack.Screen name="workouts/exercise-progress" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaProvider>
     </View>
