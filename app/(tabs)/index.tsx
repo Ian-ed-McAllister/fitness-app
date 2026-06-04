@@ -98,6 +98,12 @@ export default function NutritionTab() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={styles.topBar}>
+        <Text style={styles.topBarTitle}>Nutrition</Text>
+        <TouchableOpacity onPress={() => router.push('/nutrition/settings')} hitSlop={12}>
+          <Ionicons name="settings-outline" size={22} color={Colors.textSecondary} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.dateRow}>
         <TouchableOpacity onPress={goBack} style={styles.arrow} hitSlop={12}>
           <Ionicons name="chevron-back" size={22} color={Colors.textSecondary} />

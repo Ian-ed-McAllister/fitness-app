@@ -378,3 +378,63 @@ export async function getExercisePR(exerciseId: string): Promise<number | null> 
   );
   return row?.max_weight ?? null;
 }
+
+export interface WorkoutVolumeSummary {
+  sessions: number;
+  sets: number;
+  daysActive: number;
+}
+
+export async function getWorkoutVolume(days: number): Promise<WorkoutVolumeSummary> {
+  const db = await getDatabase();
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  const row = await db.getFirstAsync<any>(
+    `SELECT
+       COUNT(DISTINCT ws.id) as sessions,
+       COUNT(ss.id) as sets,
+       COUNT(DISTINCT date(ws.started_at / 1000, 'unixepoch')) as days_active
+     FROM workout_sessions ws
+     LEFT JOIN session_sets ss ON ss.session_id = ws.id AND ss.completed = 1
+     WHERE ws.finished_at IS NOT NULL AND ws.started_at >= ?`,
+    [cutoff]
+  );
+  return {
+    sessions: row?.sessions ?? 0,
+    sets: row?.sets ?? 0,
+    daysActive: row?.days_active ?? 0,
+  };
+}
+
+export interface ExercisePRSummary {
+  exerciseId: string;
+  name: string;
+  muscleGroup?: string;
+  pr: number;
+  sessions: number;
+}
+
+export async function getTopExercisePRs(limit = 8): Promise<ExercisePRSummary[]> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<any>(
+    `SELECT
+       e.id as exercise_id,
+       e.name,
+       e.muscle_group,
+       MAX(ss.weight) as pr,
+       COUNT(DISTINCT ss.session_id) as sessions
+     FROM session_sets ss
+     JOIN exercises e ON e.id = ss.exercise_id
+     WHERE ss.completed = 1 AND ss.weight IS NOT NULL AND ss.weight > 0
+     GROUP BY ss.exercise_id
+     ORDER BY pr DESC
+     LIMIT ?`,
+    [limit]
+  );
+  return rows.map((r) => ({
+    exerciseId: r.exercise_id,
+    name: r.name,
+    muscleGroup: r.muscle_group ?? undefined,
+    pr: r.pr,
+    sessions: r.sessions,
+  }));
+}

@@ -175,3 +175,36 @@ export async function updateFoodLog(id: string, servings: number): Promise<void>
   const db = await getDatabase();
   await db.runAsync(`UPDATE food_log SET servings = ? WHERE id = ?`, [servings, id]);
 }
+
+export interface DayNutrition {
+  date: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+export async function getCaloriesHistory(days: number): Promise<DayNutrition[]> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<any>(
+    `SELECT
+       fl.date,
+       SUM(f.calories * fl.servings) as calories,
+       SUM(f.protein  * fl.servings) as protein,
+       SUM(f.carbs    * fl.servings) as carbs,
+       SUM(f.fat      * fl.servings) as fat
+     FROM food_log fl
+     JOIN foods f ON f.id = fl.food_id
+     WHERE fl.date >= date('now', ?)
+     GROUP BY fl.date
+     ORDER BY fl.date ASC`,
+    [`-${days - 1} days`]
+  );
+  return rows.map((r) => ({
+    date: r.date,
+    calories: Math.round(r.calories ?? 0),
+    protein: Math.round((r.protein ?? 0) * 10) / 10,
+    carbs: Math.round((r.carbs ?? 0) * 10) / 10,
+    fat: Math.round((r.fat ?? 0) * 10) / 10,
+  }));
+}

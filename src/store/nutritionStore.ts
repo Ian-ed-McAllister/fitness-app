@@ -17,6 +17,7 @@ interface NutritionState {
   setSelectedDate: (date: string) => void;
   loadDailyLog: (date?: string) => Promise<void>;
   loadGoals: () => Promise<void>;
+  updateGoals: (goals: DailyGoals) => Promise<void>;
   removeLogEntry: (id: string) => Promise<void>;
   setPendingMealSlot: (slot: MealSlot | null) => void;
   setSelectedFoodForMeal: (food: FoodItem | null) => void;
@@ -65,6 +66,15 @@ export const useNutritionStore = create<NutritionState>()((set, get) => ({
         });
       }
     } catch {}
+  },
+
+  updateGoals: async (goals) => {
+    const db = await getDatabase();
+    await db.runAsync(
+      `UPDATE user_settings SET calorie_goal = ?, protein_goal = ?, carbs_goal = ?, fat_goal = ? WHERE id = 1`,
+      [goals.calories, goals.protein, goals.carbs, goals.fat]
+    );
+    set({ goals });
   },
 
   loadCustomMealSlots: async () => {

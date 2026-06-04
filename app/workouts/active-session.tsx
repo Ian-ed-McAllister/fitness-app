@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import * as Haptics from 'expo-haptics';
 import {
   View,
   Text,
@@ -107,6 +108,7 @@ export default function ActiveSessionScreen() {
     const reps = repsStr ? parseInt(repsStr, 10) : undefined;
 
     await logActiveSet(exerciseId, reps, weight);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
     // Pre-fill weight with what was just logged, clear reps
     setInputs((prev) => ({

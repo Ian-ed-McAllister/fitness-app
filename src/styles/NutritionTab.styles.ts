@@ -3,6 +3,20 @@ import { Colors } from '../constants/colors';
 
 export const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 4,
+  },
+  topBarTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: Colors.text,
+    letterSpacing: -0.5,
+  },
   dateRow: {
     flexDirection: 'row',
     alignItems: 'center',
