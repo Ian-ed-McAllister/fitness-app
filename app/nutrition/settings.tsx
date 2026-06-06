@@ -17,6 +17,7 @@ import { Colors } from '../../src/constants/colors';
 import { useNutritionStore } from '../../src/store/nutritionStore';
 import { useWeightStore } from '../../src/store/weightStore';
 import { useProfileStore } from '../../src/store/profileStore';
+import { MacroPresetPicker } from '../../src/components/ui/MacroPresetPicker';
 
 export default function NutritionSettingsScreen() {
   const { goals, loadGoals, updateGoals } = useNutritionStore();
@@ -107,6 +108,12 @@ export default function NutritionSettingsScreen() {
             onChange={setCalories}
             error={errors.calories}
           />
+
+          <MacroPresetPicker
+            calories={parseInt(calories, 10) || 0}
+            onApply={(p, c, f) => { setProtein(String(p)); setCarbs(String(c)); setFat(String(f)); }}
+          />
+
           <View style={styles.row2}>
             <View style={{ flex: 1 }}>
               <GoalField

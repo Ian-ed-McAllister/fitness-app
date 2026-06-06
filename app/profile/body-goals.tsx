@@ -15,6 +15,7 @@ import {
   type BodyGoal, type ActivityLevel,
 } from '../../src/utils/tdee';
 import { useNutritionStore } from '../../src/store/nutritionStore';
+import { MacroPresetPicker } from '../../src/components/ui/MacroPresetPicker';
 
 const BODY_GOALS: BodyGoal[] = ['lose_fat', 'maintain', 'gain_muscle', 'bulk', 'recomp'];
 const ACTIVITY_LEVELS: ActivityLevel[] = ['sedentary', 'light', 'moderate', 'very_active', 'athlete'];
@@ -268,6 +269,10 @@ export default function BodyGoalsScreen() {
               <TouchableOpacity style={styles.applyBtn} onPress={applysuggested}>
                 <Text style={styles.applyBtnText}>Apply to Nutrition Goals</Text>
               </TouchableOpacity>
+              <MacroPresetPicker
+                calories={suggested}
+                onApply={(p, c, f) => updateGoals({ calories: suggested, protein: p, carbs: c, fat: f })}
+              />
             </View>
           )}
 
