@@ -24,12 +24,9 @@
       "edgeToEdgeEnabled": true,
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.CAMERA"
       ],
-      "package": "com.anonymous.fitnessapp"
+      "package": "com.ianmc.fittrack"
     },
     "web": {
       "favicon": "./assets/favicon.png"
