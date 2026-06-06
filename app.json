@@ -24,7 +24,8 @@
       "edgeToEdgeEnabled": true,
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.ianmc.fittrack"
     },
@@ -40,6 +41,12 @@
           "cameraPermission": "Allow FitTrack to access your camera to scan food barcodes."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "79f58cb7-bee6-4f59-9f3d-5e76b9cab5be"
+      }
+    }
   }
 }

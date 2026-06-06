@@ -29,7 +29,6 @@ I wanted a simple way to track my workouts, but every app I tried was bloated wi
 - Custom meal slot names
 
 ### Water Tracking
-- Quick-add buttons (+200ml, +350ml, +500ml, +750ml) on the Nutrition tab
 - Set a daily water goal
 - Daily progress bar and streak tracking
 
@@ -65,7 +64,6 @@ I wanted a simple way to track my workouts, but every app I tried was bloated wi
 ### General
 - Fully offline — all data stored locally via SQLite
 - Dark theme throughout
-- Haptic feedback on set completion
 
 ## Tech Stack
 
@@ -77,6 +75,12 @@ I wanted a simple way to track my workouts, but every app I tried was bloated wi
 - date-fns for date utilities
 - expo-camera for barcode scanning
 
-## Package
+## Install on Android
 
-`com.ianmc.fittrack`
+**Latest build:** https://expo.dev/accounts/ianmcallister/projects/fitness-app/builds/85954f25-3229-4ee2-8783-c5ca615df033
+
+1. Open the link above on your Android phone
+2. Tap **Download** to download the APK
+3. Open the downloaded file — if prompted, allow installation from unknown sources
+4. If Google Play Protect warns you, tap **Install anyway**
+5. The app will appear on your home screen as **FitTrack**
