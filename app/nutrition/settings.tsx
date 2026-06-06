@@ -16,26 +16,25 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants/colors';
 import { useNutritionStore } from '../../src/store/nutritionStore';
 import { useWeightStore } from '../../src/store/weightStore';
+import { useProfileStore } from '../../src/store/profileStore';
 
 export default function NutritionSettingsScreen() {
   const { goals, loadGoals, updateGoals } = useNutritionStore();
   const { unit: weightUnit, setUnit } = useWeightStore();
+  const { waterGoalMl, updateProfile, loadProfile } = useProfileStore();
 
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
   const [fat, setFat] = useState('');
+  const [waterGoal, setWaterGoal] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    loadGoals().then(() => {
-      setCalories(String(goals.calories));
-      setProtein(String(goals.protein));
-      setCarbs(String(goals.carbs));
-      setFat(String(goals.fat));
-    });
+    loadGoals();
+    loadProfile();
   }, []);
 
   // Sync once goals load from DB
@@ -45,6 +44,10 @@ export default function NutritionSettingsScreen() {
     setCarbs(String(goals.carbs));
     setFat(String(goals.fat));
   }, [goals.calories, goals.protein, goals.carbs, goals.fat]);
+
+  useEffect(() => {
+    setWaterGoal(String(waterGoalMl));
+  }, [waterGoalMl]);
 
   function validate() {
     const errs: Record<string, string> = {};
@@ -63,12 +66,17 @@ export default function NutritionSettingsScreen() {
     if (!validate()) return;
     setSaving(true);
     try {
-      await updateGoals({
-        calories: parseInt(calories, 10),
-        protein: parseInt(protein, 10),
-        carbs: parseInt(carbs, 10),
-        fat: parseInt(fat, 10),
-      });
+      await Promise.all([
+        updateGoals({
+          calories: parseInt(calories, 10),
+          protein: parseInt(protein, 10),
+          carbs: parseInt(carbs, 10),
+          fat: parseInt(fat, 10),
+        }),
+        updateProfile({
+          waterGoalMl: parseInt(waterGoal, 10) || 2500,
+        }),
+      ]);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } finally {
@@ -141,6 +149,17 @@ export default function NutritionSettingsScreen() {
               fat={parseInt(fat, 10) || 0}
             />
           )}
+
+          <View style={styles.divider} />
+
+          {/* ── Water Goal ───────────────────────────────────────────── */}
+          <Text style={styles.sectionLabel}>Daily Water Goal (ml)</Text>
+          <GoalField
+            label="Water"
+            unit="ml"
+            value={waterGoal}
+            onChange={setWaterGoal}
+          />
 
           <View style={styles.divider} />
 

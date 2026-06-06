@@ -18,6 +18,7 @@ import { format, parseISO } from 'date-fns';
 import { Colors } from '../../src/constants/colors';
 import { WeightChart } from '../../src/components/charts/WeightChart';
 import { useWeightStore } from '../../src/store/weightStore';
+import { useProfileStore } from '../../src/store/profileStore';
 import { styles } from '../../src/styles/WeightTab.styles';
 import { sheetStyles } from '../../src/styles/Sheet.styles';
 
@@ -26,8 +27,10 @@ type Range = 30 | 60 | 90;
 export default function WeightTab() {
   const { entries, unit, isLoading, loadEntries, loadUnit, logWeight, removeEntry, setUnit } =
     useWeightStore();
+  const { goalDirection } = useProfileStore();
 
   const [range, setRange] = useState<Range>(30);
+  const [showAvg, setShowAvg] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [weightInput, setWeightInput] = useState('');
   const [notesInput, setNotesInput] = useState('');
@@ -83,6 +86,15 @@ export default function WeightTab() {
   const change =
     entries.length >= 2 ? entries[0].weight - entries[entries.length - 1].weight : null;
 
+  // Goal-aware colour for change stat
+  function changeColour(delta: number | null): string {
+    if (delta === null) return Colors.text;
+    if (goalDirection === 'gain') return delta >= 0 ? Colors.primary : Colors.danger;
+    if (goalDirection === 'lose') return delta <= 0 ? Colors.primary : Colors.danger;
+    // maintain — neutral either way
+    return Colors.text;
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
@@ -121,7 +133,7 @@ export default function WeightTab() {
               label="Change"
               value={change != null ? `${change > 0 ? '+' : ''}${change.toFixed(1)}` : '—'}
               unit={change != null ? unit : ''}
-              valueColor={change != null ? (change <= 0 ? Colors.primary : Colors.danger) : Colors.text}
+              valueColor={changeColour(change)}
             />
           </View>
 
@@ -129,21 +141,31 @@ export default function WeightTab() {
           <View style={styles.chartCard}>
             <View style={styles.chartHeader}>
               <Text style={styles.chartTitle}>Progress</Text>
-              <View style={styles.rangeToggle}>
-                {([30, 60, 90] as Range[]).map((r) => (
-                  <TouchableOpacity
-                    key={r}
-                    style={[styles.rangeBtn, range === r && styles.rangeBtnActive]}
-                    onPress={() => setRange(r)}
-                  >
-                    <Text style={[styles.rangeBtnText, range === r && styles.rangeBtnTextActive]}>
-                      {r}d
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+              <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
+                <TouchableOpacity
+                  style={[styles.rangeBtn, showAvg && styles.rangeBtnActive]}
+                  onPress={() => setShowAvg((v) => !v)}
+                >
+                  <Text style={[styles.rangeBtnText, showAvg && styles.rangeBtnTextActive]}>
+                    Avg
+                  </Text>
+                </TouchableOpacity>
+                <View style={styles.rangeToggle}>
+                  {([30, 60, 90] as Range[]).map((r) => (
+                    <TouchableOpacity
+                      key={r}
+                      style={[styles.rangeBtn, range === r && styles.rangeBtnActive]}
+                      onPress={() => setRange(r)}
+                    >
+                      <Text style={[styles.rangeBtnText, range === r && styles.rangeBtnTextActive]}>
+                        {r}d
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
             </View>
-            <WeightChart entries={entries} unit={unit} days={range} width={chartWidth} />
+            <WeightChart entries={entries} unit={unit} days={range} width={chartWidth} showAverage={showAvg} />
           </View>
 
           {/* Entry list */}

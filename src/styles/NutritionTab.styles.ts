@@ -133,3 +133,41 @@ export const macroBarStyles = StyleSheet.create({
   val: { fontSize: 12, fontWeight: '600', color: Colors.text },
   goal: { fontWeight: '400', color: Colors.textMuted },
 });
+
+export const waterStyles = StyleSheet.create({
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: 14,
+    marginHorizontal: 16,
+    marginBottom: 8,
+    padding: 14,
+    gap: 8,
+  },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  title: { fontSize: 14, fontWeight: '600', color: Colors.text },
+  amount: { fontSize: 13 },
+  current: { color: '#4FC3F7', fontWeight: '700' },
+  goal: { color: Colors.textMuted, fontWeight: '400' },
+  bar: {
+    height: 6,
+    backgroundColor: Colors.surface2,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  fill: {
+    height: 6,
+    backgroundColor: '#4FC3F7',
+    borderRadius: 3,
+  },
+  remaining: { fontSize: 11, color: Colors.textMuted },
+  quickAdd: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  pill: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: Colors.surface2,
+  },
+  pillCustom: { paddingHorizontal: 10 },
+  pillText: { fontSize: 12, fontWeight: '600', color: '#4FC3F7' },
+});

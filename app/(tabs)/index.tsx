@@ -16,8 +16,9 @@ import { Colors } from '../../src/constants/colors';
 import { MacroRing, MealSection } from '../../src/components/nutrition';
 import { ProgressBar } from '../../src/components/ui';
 import { useNutritionStore, computeTotals } from '../../src/store/nutritionStore';
+import { useProfileStore } from '../../src/store/profileStore';
 import { DEFAULT_MEAL_SLOTS, DEFAULT_SLOT_LABELS } from '../../src/types/nutrition';
-import { styles, macroBarStyles } from '../../src/styles/NutritionTab.styles';
+import { styles, macroBarStyles, waterStyles } from '../../src/styles/NutritionTab.styles';
 import { sheetStyles } from '../../src/styles/Sheet.styles';
 import type { FoodLogEntry, MealSlot } from '../../src/types/nutrition';
 
@@ -37,6 +38,10 @@ export default function NutritionTab() {
     removeCustomMealSlot,
   } = useNutritionStore();
 
+  const { waterGoalMl, todayWaterMl, addWater, loadTodayWater } = useProfileStore();
+  const [customWaterVisible, setCustomWaterVisible] = useState(false);
+  const [customWaterInput, setCustomWaterInput] = useState('');
+
   const [addMealVisible, setAddMealVisible] = useState(false);
   const [newMealName, setNewMealName] = useState('');
   const [deleteMealSlot, setDeleteMealSlot] = useState<string | null>(null);
@@ -50,6 +55,7 @@ export default function NutritionTab() {
   useFocusEffect(
     useCallback(() => {
       loadDailyLog();
+      loadTodayWater();
     }, [selectedDate])
   );
 
@@ -145,6 +151,14 @@ export default function NutritionTab() {
             </View>
           </View>
 
+          {/* Water tracking */}
+          <WaterCard
+            current={todayWaterMl}
+            goal={waterGoalMl}
+            onAdd={(ml) => addWater(ml)}
+            onCustom={() => { setCustomWaterInput(''); setCustomWaterVisible(true); }}
+          />
+
           {allSlots.map((slot) => (
             <MealSection
               key={slot}
@@ -229,6 +243,44 @@ export default function NutritionTab() {
         </TouchableOpacity>
       </Modal>
 
+      {/* Custom water amount modal */}
+      <Modal visible={customWaterVisible} transparent animationType="fade" onRequestClose={() => setCustomWaterVisible(false)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setCustomWaterVisible(false)}>
+          <TouchableOpacity style={styles.modalBox} activeOpacity={1}>
+            <Text style={styles.modalTitle}>Add Water (ml)</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="e.g. 400"
+              placeholderTextColor={Colors.textMuted}
+              value={customWaterInput}
+              onChangeText={setCustomWaterInput}
+              keyboardType="number-pad"
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={() => {
+                const ml = parseInt(customWaterInput, 10);
+                if (!isNaN(ml) && ml > 0) { addWater(ml); setCustomWaterVisible(false); }
+              }}
+            />
+            <View style={styles.modalBtns}>
+              <TouchableOpacity style={styles.modalCancel} onPress={() => setCustomWaterVisible(false)}>
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalConfirm, !customWaterInput.trim() && styles.modalConfirmDisabled]}
+                disabled={!customWaterInput.trim()}
+                onPress={() => {
+                  const ml = parseInt(customWaterInput, 10);
+                  if (!isNaN(ml) && ml > 0) { addWater(ml); setCustomWaterVisible(false); }
+                }}
+              >
+                <Text style={styles.modalConfirmText}>Add</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
       {/* Remove custom meal slot sheet */}
       <Modal visible={!!deleteMealSlot} transparent animationType="slide" onRequestClose={() => setDeleteMealSlot(null)}>
         <TouchableOpacity style={sheetStyles.overlay} activeOpacity={1} onPress={() => setDeleteMealSlot(null)}>
@@ -261,6 +313,44 @@ function MacroBar({ label, current, goal, color }: { label: string; current: num
         </Text>
       </View>
       <ProgressBar current={current} goal={goal} color={color} height={5} />
+    </View>
+  );
+}
+
+function WaterCard({ current, goal, onAdd, onCustom }: {
+  current: number; goal: number;
+  onAdd: (ml: number) => void; onCustom: () => void;
+}) {
+  const pct = Math.min(1, current / Math.max(goal, 1));
+  const remaining = Math.max(0, goal - current);
+  return (
+    <View style={waterStyles.card}>
+      <View style={waterStyles.header}>
+        <View style={waterStyles.titleRow}>
+          <Ionicons name="water" size={16} color="#4FC3F7" />
+          <Text style={waterStyles.title}>Water</Text>
+        </View>
+        <Text style={waterStyles.amount}>
+          <Text style={waterStyles.current}>{Math.round(current)}</Text>
+          <Text style={waterStyles.goal}> / {goal} ml</Text>
+        </Text>
+      </View>
+      <View style={waterStyles.bar}>
+        <View style={[waterStyles.fill, { width: `${Math.round(pct * 100)}%` }]} />
+      </View>
+      {remaining > 0 && (
+        <Text style={waterStyles.remaining}>{remaining} ml to go</Text>
+      )}
+      <View style={waterStyles.quickAdd}>
+        {[200, 350, 500, 750].map((ml) => (
+          <TouchableOpacity key={ml} style={waterStyles.pill} onPress={() => onAdd(ml)}>
+            <Text style={waterStyles.pillText}>+{ml}</Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity style={[waterStyles.pill, waterStyles.pillCustom]} onPress={onCustom}>
+          <Ionicons name="add" size={14} color={Colors.textSecondary} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

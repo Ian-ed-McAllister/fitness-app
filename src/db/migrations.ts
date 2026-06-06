@@ -131,9 +131,31 @@ export async function runMigrations(): Promise<void> {
   `);
 
   // Additive migrations — safe to re-run (errors mean column already exists)
-  try {
-    await db.execAsync(
-      `ALTER TABLE user_settings ADD COLUMN custom_meal_slots TEXT NOT NULL DEFAULT '[]'`
+  const addCols = [
+    `ALTER TABLE user_settings ADD COLUMN custom_meal_slots TEXT NOT NULL DEFAULT '[]'`,
+    `ALTER TABLE user_settings ADD COLUMN display_name TEXT`,
+    `ALTER TABLE user_settings ADD COLUMN date_of_birth TEXT`,
+    `ALTER TABLE user_settings ADD COLUMN biological_sex TEXT`,
+    `ALTER TABLE user_settings ADD COLUMN height_cm REAL`,
+    `ALTER TABLE user_settings ADD COLUMN goal_weight REAL`,
+    `ALTER TABLE user_settings ADD COLUMN body_goal TEXT DEFAULT 'maintain'`,
+    `ALTER TABLE user_settings ADD COLUMN activity_level TEXT DEFAULT 'moderate'`,
+    `ALTER TABLE user_settings ADD COLUMN weekly_workout_target INTEGER DEFAULT 3`,
+    `ALTER TABLE user_settings ADD COLUMN water_goal_ml INTEGER DEFAULT 2500`,
+    `ALTER TABLE user_settings ADD COLUMN goal_direction TEXT DEFAULT 'maintain'`,
+  ];
+  for (const sql of addCols) {
+    try { await db.execAsync(sql); } catch {}
+  }
+
+  // New tables (safe to re-run)
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS water_log (
+      id TEXT PRIMARY KEY,
+      date TEXT NOT NULL,
+      amount_ml REAL NOT NULL,
+      logged_at INTEGER NOT NULL
     );
-  } catch {}
+    CREATE INDEX IF NOT EXISTS idx_water_log_date ON water_log(date);
+  `);
 }

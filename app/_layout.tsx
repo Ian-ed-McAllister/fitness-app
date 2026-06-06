@@ -60,6 +60,8 @@ export default function RootLayout() {
           <Stack.Screen name="workouts/session-history" options={{ headerShown: false }} />
           <Stack.Screen name="workouts/exercise-progress" options={{ headerShown: false }} />
           <Stack.Screen name="nutrition/settings" options={{ headerShown: false }} />
+          <Stack.Screen name="profile/edit-profile" options={{ headerShown: false }} />
+          <Stack.Screen name="profile/body-goals" options={{ headerShown: false }} />
         </Stack>
       </SafeAreaProvider>
     </View>
